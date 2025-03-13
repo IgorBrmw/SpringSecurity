@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Page</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+    <h1>Welcome, Admin <span th:text="${user}"></span>!</h1>
+    <p>This is the admin dashboard.</p>
+
+    <!-- Ссылка на управление пользователями (пример) -->
+    <a th:href="@{/admin/users}" class="btn btn-primary">Manage Users</a>
+
+    <!-- Кнопка выхода -->
+    <form th:action="@{/logout}" method="post">
+        <button type="submit" class="btn btn-danger">Logout</button>
+    </form>
+</div>
+</body>
+</html>
