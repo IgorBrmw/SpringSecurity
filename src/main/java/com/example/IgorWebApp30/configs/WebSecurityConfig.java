@@ -1,5 +1,6 @@
 package com.example.IgorWebApp30.configs;
 
+import com.example.IgorWebApp30.repository.UserRepository;
 import com.example.IgorWebApp30.service.UserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,11 +20,12 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 public class WebSecurityConfig {
 
     private final AuthenticationSuccessHandler successHandler;
+    private final UserDetailsService userDetailsService;
 
-    public WebSecurityConfig(AuthenticationSuccessHandler successHandler) {
+    public WebSecurityConfig(AuthenticationSuccessHandler successHandler, UserDetailsService userDetailsService) {
         this.successHandler = successHandler;
+        this.userDetailsService = userDetailsService;
     }
-
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -31,45 +33,24 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public UserDetailsService userDetailsService() {
-        return new UserDetailsServiceImpl();
-    }
-
-//    @Bean
-//    public SecurityFilterChain mySpringSecurityFilterChain(HttpSecurity http) throws Exception {
-//        http.authorizeHttpRequests(auth -> auth
-//                        .requestMatchers("/").hasAnyAuthority("USER", "CREATOR", "EDITOR", "ADMIN")
-//                        .requestMatchers("/new").hasAnyAuthority("ADMIN", "CREATOR")
-//                        .requestMatchers("/edit/**").hasAnyAuthority("ADMIN", "EDITOR")
-//                        .requestMatchers("/delete/**").hasAuthority("ADMIN")
-//                        .anyRequest().authenticated()
-//                )
-//                .formLogin(login -> login.permitAll())
-//                .logout(logout -> logout.permitAll())
-//                .exceptionHandling(eh -> eh.accessDeniedPage("/403"))
-//        ;
-//        return http.build();
-//    }
-
-    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/public/**").permitAll() // Разрешить доступ всем
+                        .requestMatchers("/", "/public/**").permitAll()
                         .requestMatchers("/user/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN") // Доступ для USER и ADMIN
-                        .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN") // Доступ только для ADMIN
-                        .anyRequest().authenticated() // Все остальные запросы требуют аутентификации
+                        .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
+                        .anyRequest().authenticated()
                 )
                 .formLogin(login -> login.successHandler(successHandler)
-                        // Не указываем loginPage, чтобы использовать стандартную страницу логина
-                        .permitAll() // Разрешить доступ к странице логина всем
+
+                        .permitAll()
                 )
                 .logout(logout -> logout
-                        .logoutSuccessUrl("/") // Перенаправление после выхода на главную страницу
-                        .permitAll() // Разрешить выход всем
+                        .logoutSuccessUrl("/")
+                        .permitAll()
                 )
                 .exceptionHandling(eh -> eh
-                        .accessDeniedPage("/403") // Страница для ошибки доступа
+                        .accessDeniedPage("/403")
                 );
 
         return http.build();
@@ -78,7 +59,7 @@ public class WebSecurityConfig {
     @Bean
     DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userDetailsService());
+        authProvider.setUserDetailsService(userDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder());
 
         return authProvider;

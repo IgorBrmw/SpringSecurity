@@ -10,7 +10,6 @@
   <h1>Welcome, <span th:text="${user}"></span>!</h1>
   <p>This is your personal page.</p>
 
-  <!-- Кнопка выхода -->
   <form th:action="@{/logout}" method="post">
     <button type="submit" class="btn btn-danger">Logout</button>
   </form>

@@ -2,11 +2,10 @@ package com.example.IgorWebApp30.model;
 
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -14,7 +13,6 @@ import java.util.*;
 @Table(name = "users")
 public class User implements UserDetails {
 
-    @Setter
     @Id
     @Column(name = "user_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,25 +21,39 @@ public class User implements UserDetails {
     private String username;
     private String password;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
+
     @Column(name = "email")
     private String email;
 
     public User() {
     }
 
-    public User(String username, String password, String email) {
+    public User(String username, String password, String email, Set<Role> roles) {
         this.username = username;
         this.password = password;
         this.email = email;
+        this.roles = roles;
     }
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public Integer getId() {
@@ -50,10 +62,6 @@ public class User implements UserDetails {
 
     public String getEmail() {
         return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getUsername() {
@@ -85,6 +93,7 @@ public class User implements UserDetails {
         return authorities;
     }
 
+    @Override
     public boolean isEnabled() {
         return true;
     }
@@ -92,10 +101,6 @@ public class User implements UserDetails {
     @Override
     public String toString() {
         return "User [id=" + id + ", username=" + username + ", email=" + email + "]";
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     @Override
@@ -111,7 +116,4 @@ public class User implements UserDetails {
         return roles;
     }
 
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
-    }
 }

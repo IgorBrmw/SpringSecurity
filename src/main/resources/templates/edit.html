@@ -13,7 +13,19 @@
     <label for="password">Password:</label>
     <input type="password" id="password" th:field="*{password}" required>
     <br>
+    <label for="email">Email:</label>
+    <input type="email" id="email" th:field="*{email}" required>
+    <br>
+    <h3>Roles:</h3>
+    <div th:each="role : ${roles}">
+        <input type="checkbox" th:id="'role_' + ${role.id}" th:value="${role.id}"
+               th:checked="${user.roles.contains(role)}"
+               th:name="'roles'">
+        <label th:for="'role_' + ${role.id}" th:text="${role.name}"></label>
+        <br>
+    </div>
     <button type="submit">Update</button>
+
 </form>
 </body>
 </html>

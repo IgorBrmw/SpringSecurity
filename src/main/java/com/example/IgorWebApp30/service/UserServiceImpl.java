@@ -24,30 +24,34 @@ public class UserServiceImpl implements UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
+
     @Override
     @Transactional
     public void saveUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword())); // Хэшируем пароль
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
     }
 
     @Override
     @Transactional
     public void updateUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword())); // Хэшируем пароль
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
     }
 
     @Override
+    @Transactional
     public User getUserById(long id) {
         return userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
     }
 
+    @Override
     @Transactional
     public List<User> getAllUsers() {
         return (List<User>) userRepository.findAll();
     }
 
+    @Override
     @Transactional
     public void deleteUser(long id) {
         userRepository.deleteById(id);
