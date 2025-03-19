@@ -21,17 +21,16 @@ import java.util.Set;
 public class AdminController {
 
     private final RoleService roleService;
-    private final UserServiceImpl userService;
+    private final UserService userService;
 
     @Autowired
-    public AdminController(UserServiceImpl userService, RoleService roleService) {
+    public AdminController(UserService userService, RoleService roleService) {
         this.userService = userService;
         this.roleService = roleService;
     }
 
     @GetMapping
     public String adminPage(Principal principal, Model model) {
-
         model.addAttribute("user", principal.getName());
         return "admin";
     }

@@ -24,7 +24,6 @@ public class UserServiceImpl implements UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-
     @Override
     @Transactional
     public void saveUser(User user) {
